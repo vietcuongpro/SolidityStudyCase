@@ -1,0 +1,43 @@
+- create a multi-sig (signature) wallet. The wallet owners can
+    submit a transaction
+    approve and revoke approval of pending transactions
+    anyone can execute a transaction after enough owners has approved it.
+
+Steps by steps:
+
+- First, we define the events: Deposit, Submit, Approve, Revoke, Execute
+- We need to store owners into an array & a mapping address to check if that is owner
+- Once a transaction is submitted, others owner have to approve before it can execute
+    => Set a number for required approvals -> requiredApproval
+
+- Define struct Transaction to store what kind of info in it
+- Define a mapping to indicate for a transaction, which owner approved or not
+    => mapping(uint => mapping(address => bool))
+    uint here means txId
+
+- Intiate constructor: 2 args - addresses of owners & required number of approvals
+    => Make sure to check
+        +) owners > 0, 0 < requiredApprovals <= owners
+        +) each owner not equal address(0), also unique
+        +) update mapping as well
+
+- Make the wallet can receive ether
+    emit Deposit() event
+
+- Next write submit function:
+    only owner can submit
+    create new transaction & push into array
+
+- Approve function:
+    Make sure onlyOwner can approve, txId exist & not approve & not execute
+    Change mapping approve indicator
+
+- Make a function count number of approval
+
+- Write Execute function
+    Make sure txId exist, not executed
+    Sent the data, value
+
+- Revoke function: undo the approve function (ofc before execute)
+
+["0x5B38Da6a701c568545dCfcB03FcB875f56beddC4", "0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db"]
