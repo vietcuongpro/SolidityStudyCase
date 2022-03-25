@@ -1,11 +1,2 @@
-Try running some of the following tasks:
+This contract simulate a lazy-minting method, can be used in game when user want to withdraw token -> wallet
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```

@@ -20,9 +20,13 @@ contract LazyWithdrawToken is ERC20, EIP712, AccessControl {
     
     /// @notice Represent un-minted Token, not yet recorded in blockchain. To get token, using redeem function 
     struct Voucher {
+        /// @notice voucherId must be unique -> to avoid reclaimed; if the Id already exists -> revert
+        uint256 voucherId;
         /// @notice amount of token to redeem
         uint256 amount;
         address recipient;
+        /// @notice the EIP-712 signature of all other fields in Voucher struct.
+        /// For a voucher to be valid, it must be signed by an account with MINTER_ROLE
         bytes signature;
     }
 
@@ -32,7 +36,7 @@ contract LazyWithdrawToken is ERC20, EIP712, AccessControl {
         // Get address of signer
         address signer = _verify(voucher);
         
-        require(hasRole(MINTER_ROLE, signer), "Signature invalid or unauthorized!");
+        require(hasRole(MINTER_ROLE, signer), "Signature invalid or unauthorized to redeem!");
 
         _mint(signer, voucher.amount);
         _transfer(signer, msg.sender, voucher.amount);
@@ -50,7 +54,8 @@ contract LazyWithdrawToken is ERC20, EIP712, AccessControl {
     /// @notice Returns a hash of the given Voucher, prepared using EIP712 typed data hashing rules.
     function _hash(Voucher calldata voucher) internal view returns (bytes32) {
         return _hashTypedDataV4(keccak256(abi.encode(
-            keccak256("Voucher(uint256 amount,address recipient)"),
+            keccak256("Voucher(uint256 voucherId,uint256 amount,address recipient)"),
+            voucher.voucherId,
             voucher.amount,
             voucher.recipient
         )));
